@@ -17,9 +17,9 @@ def simulate_policy(args):
         policy.to(ptu.device)
     if isinstance(env, VAEWrappedEnv) and hasattr(env, 'mode'):
         env.mode(args.mode)
-    if args.enable_render or hasattr(env, 'enable_render'):
+    #if args.enable_render or hasattr(env, 'enable_render'):
         # some environments need to be reconfigured for visualization
-        env.enable_render()
+    env.enable_render()
     paths = []
     while True:
         paths.append(multitask_rollout(

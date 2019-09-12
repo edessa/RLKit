@@ -93,6 +93,6 @@ if __name__ == "__main__":
         ),
         replay_buffer_size=int(1E6),
     )
-    ptu.set_gpu_mode(False)  # optionally set the GPU (default=False)
+    # ptu.set_gpu_mode(True)  # optionally set the GPU (default=False)
     setup_logger('name-of-experiment', variant=variant)
     experiment(variant)

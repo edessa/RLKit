@@ -13,7 +13,8 @@ if __name__ == "__main__":
         online_vae_exploration=False,
         imsize=48,
         init_camera=sawyer_init_camera_zoomed_in,
-        env_id='SawyerPushNIPSEasy-v0',
+        #env_id='SawyerPushNIPSEasy-v0',
+        env_id = 'SawyerMultiObj-v0',
         skewfit_variant=dict(
             save_video=True,
             custom_goal_sampler='replay_buffer',
@@ -31,7 +32,7 @@ if __name__ == "__main__":
             vf_kwargs=dict(
                 hidden_sizes=[400, 300],
             ),
-            max_path_length=50,
+            max_path_length=500,
             algo_kwargs=dict(
                 batch_size=1024,
                 num_epochs=1000,
@@ -41,7 +42,7 @@ if __name__ == "__main__":
                 min_num_steps_before_training=10000,
                 vae_training_schedule=vae_schedules.custom_schedule_2,
                 oracle_data=False,
-                vae_save_period=50,
+                vae_save_period=2,
                 parallel_vae_train=False,
             ),
             twin_sac_trainer_kwargs=dict(
@@ -63,7 +64,7 @@ if __name__ == "__main__":
                     decoder_distribution='gaussian_identity_variance',
                     num_latents_to_sample=10,
                 ),
-                power=0,
+                power=-1,
                 relabeling_goal_sampling_mode='vae_prior',
             ),
             exploration_goal_sampling_mode='vae_prior',
@@ -112,7 +113,7 @@ if __name__ == "__main__":
                 lr=1e-3,
                 skew_config=dict(
                     method='vae_prob',
-                    power=0,
+                    power=-1,
                 ),
                 skew_dataset=True,
                 priority_function_kwargs=dict(
@@ -123,7 +124,7 @@ if __name__ == "__main__":
                 use_parallel_dataloading=False,
             ),
 
-            save_period=25,
+            save_period=2,
         ),
     )
     search_space = {}
@@ -148,7 +149,7 @@ if __name__ == "__main__":
                 exp_prefix=exp_prefix,
                 mode=mode,
                 variant=variant,
-                use_gpu=False,
+                use_gpu=True,
                 num_exps_per_instance=3,
                 gcp_kwargs=dict(
                     terminate=True,

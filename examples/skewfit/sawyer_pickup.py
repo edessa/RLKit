@@ -6,7 +6,7 @@ from rlkit.envs.goal_generation.pickup_goal_dataset import (
 
 import rlkit.torch.vae.vae_schedules as vae_schedules
 from multiworld.envs.mujoco.cameras import (
-    sawyer_pick_and_place_camera,
+    sawyer_pick_and_place_camera, sawyer_pick_and_place_camera_slanted_angle,
 )
 from rlkit.launchers.launcher_util import run_experiment
 from rlkit.launchers.skewfit_experiments import skewfit_full_experiment
@@ -18,7 +18,7 @@ if __name__ == "__main__":
         algorithm='Skew-Fit',
         imsize=48,
         double_algo=False,
-        env_id="SawyerPickupEnvYZEasy-v0",
+        env_id="SawyerPickupEnv-v0",
         skewfit_variant=dict(
             sample_goals_from_buffer=True,
             save_video=True,
@@ -80,7 +80,7 @@ if __name__ == "__main__":
             exploration_goal_sampling_mode='custom_goal_sampler',
             evaluation_goal_sampling_mode='env',
             normalize=False,
-            render=False,
+            render=True,
             exploration_noise=0.0,
             exploration_type='ou',
             training_mode='train',
@@ -133,7 +133,7 @@ if __name__ == "__main__":
             ),
             save_period=10,
         ),
-        init_camera=sawyer_pick_and_place_camera,
+        init_camera=sawyer_pick_and_place_camera_slanted_angle,
     )
 
     search_space = {}
