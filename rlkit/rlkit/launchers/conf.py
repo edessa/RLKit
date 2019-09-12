@@ -90,14 +90,14 @@ SLURM_CPU_CONFIG = dict(
     partition='savio',
     nodes=1,
     n_tasks=1,
-    n_gpus=1,
+    n_gpus=2,
 )
 SLURM_GPU_CONFIG = dict(
     account_name='TODO',
     partition='savio2_1080ti',
     nodes=1,
     n_tasks=1,
-    n_gpus=1,
+    n_gpus=2,
 )
 
 
