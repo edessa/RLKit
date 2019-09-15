@@ -80,7 +80,7 @@ if __name__ == "__main__":
             exploration_goal_sampling_mode='custom_goal_sampler',
             evaluation_goal_sampling_mode='env',
             normalize=False,
-            render=True,
+            render=False,
             exploration_noise=0.0,
             exploration_type='ou',
             training_mode='train',
