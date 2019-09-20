@@ -5,30 +5,68 @@ from rlkit.core import logger
 from rlkit.samplers.rollout_functions import multitask_rollout
 from rlkit.torch import pytorch_util as ptu
 from rlkit.envs.vae_wrapper import VAEWrappedEnv
+import torch
+import gym
+import multiworld
+from multiworld.core.image_env import ImageEnv
+from multiworld.envs.mujoco.cameras import *
 
 
 def simulate_policy(args):
-    data = pickle.load(open(args.file, "rb"))
+    data = torch.load(open(args.file, "rb"))
     policy = data['evaluation/policy']
     env = data['evaluation/env']
+    imsize = 48
+   # multiworld.register_all_envs()
+    #env_multi = gym.make('SawyerPushNIPS-v0')
+   # env_multi = gym.make('SawyerMultiObj-v0')
+  #  env_multi = ImageEnv(
+  #      env_multi,
+  #      imsize = imsize,
+  #      init_camera=sawyer_pusher_camera_upright_v1,
+  #      transpose=True,
+   #     normalize=True,
+  #  )
+    #env.wrapped_env = env_multi
     print("Policy and environment loaded")
-    if args.gpu:
-        ptu.set_gpu_mode(True)
-        policy.to(ptu.device)
+    imsize = 48
+    #env_multi = gym.make('SawyerMultiObj-v0')
+#    env.wrapped_env.set_env(env_multi)
+#    env._wrapped_env._env = env_multi
+ #   env._wrapped_env = env_multi
+#    print(env._wrapped_env)
+#    print(env._wrapped_env._wrapped_env)
+#    print(env._wrapped_env)
+#
+#    env = ImageEnv(
+#        env_multi,
+#        imsize = imsize,
+#        init_camera=sawyer_pusher_camera_upright_v1,
+#        transpose=True,
+#        normalize=True,
+#    )
+#    env = VAEWrappedEnv(env, vae=data['vae'], sample_from_true_prior=True, imsize=48)
+    #if args.gpu:
+    ptu.set_gpu_mode(True)
+    #policy.to(ptu.device)
     if isinstance(env, VAEWrappedEnv) and hasattr(env, 'mode'):
         env.mode(args.mode)
     #if args.enable_render or hasattr(env, 'enable_render'):
         # some environments need to be reconfigured for visualization
+
+
+
     env.enable_render()
     paths = []
+    env._goal_sampling_mode = 'env'
     while True:
         paths.append(multitask_rollout(
             env,
             policy,
             max_path_length=args.H,
-            render=not args.hide,
-            observation_key='observation',
-            desired_goal_key='desired_goal',
+            render=False,
+            observation_key='latent_observation',
+            desired_goal_key='latent_desired_goal',
         ))
         if hasattr(env, "log_diagnostics"):
             env.log_diagnostics(paths)

@@ -138,6 +138,7 @@ class VAEWrappedEnv(ProxyEnv, MultitaskEnv):
     Multitask functions
     """
     def sample_goals(self, batch_size):
+        print("sampling goals")
         # TODO: make mode a parameter you pass in
         if self._goal_sampling_mode == 'custom_goal_sampler':
             return self.custom_goal_sampler(batch_size)
@@ -281,6 +282,7 @@ class VAEWrappedEnv(ProxyEnv, MultitaskEnv):
 
     @property
     def custom_goal_sampler(self):
+        print(self._custom_goal_sampler)
         return self._custom_goal_sampler
 
     @custom_goal_sampler.setter
@@ -288,6 +290,7 @@ class VAEWrappedEnv(ProxyEnv, MultitaskEnv):
         assert self.custom_goal_sampler is None, (
             "Cannot override custom goal setter"
         )
+        print('setting custom goal sampler', new_custom_goal_sampler)
         self._custom_goal_sampler = new_custom_goal_sampler
 
     @property

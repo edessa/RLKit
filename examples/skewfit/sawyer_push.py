@@ -1,5 +1,5 @@
 import rlkit.util.hyperparameter as hyp
-from multiworld.envs.mujoco.cameras import sawyer_init_camera_zoomed_in
+from multiworld.envs.mujoco.cameras import sawyer_pusher_camera_upright_v1
 from rlkit.launchers.launcher_util import run_experiment
 import rlkit.torch.vae.vae_schedules as vae_schedules
 from rlkit.launchers.skewfit_experiments import skewfit_full_experiment
@@ -12,7 +12,7 @@ if __name__ == "__main__":
         double_algo=False,
         online_vae_exploration=False,
         imsize=48,
-        init_camera=sawyer_init_camera_zoomed_in,
+        init_camera=sawyer_pusher_camera_upright_v1,
         #env_id='SawyerPushNIPSEasy-v0',
         env_id = 'SawyerMultiObj-v0',
         skewfit_variant=dict(
@@ -32,15 +32,15 @@ if __name__ == "__main__":
             vf_kwargs=dict(
                 hidden_sizes=[400, 300],
             ),
-            max_path_length=500,
+            max_path_length=200,
             algo_kwargs=dict(
                 batch_size=1024,
                 num_epochs=1000,
                 num_eval_steps_per_epoch=500,
                 num_expl_steps_per_train_loop=500,
                 num_trains_per_train_loop=1000,
-                min_num_steps_before_training=10000,
-                vae_training_schedule=vae_schedules.custom_schedule_2,
+                min_num_steps_before_training=30000,
+                vae_training_schedule=vae_schedules.custom_schedule,
                 oracle_data=False,
                 vae_save_period=2,
                 parallel_vae_train=False,
@@ -62,9 +62,9 @@ if __name__ == "__main__":
                 priority_function_kwargs=dict(
                     sampling_method='importance_sampling',
                     decoder_distribution='gaussian_identity_variance',
-                    num_latents_to_sample=10,
+                    num_latents_to_sample=20,
                 ),
-                power=-1,
+                power=-0.5,
                 relabeling_goal_sampling_mode='vae_prior',
             ),
             exploration_goal_sampling_mode='vae_prior',
@@ -85,7 +85,7 @@ if __name__ == "__main__":
             ),
         ),
         train_vae_variant=dict(
-            representation_size=4,
+            representation_size=16,
             beta=20,
             num_epochs=0,
             dump_skew_debug_plots=False,
@@ -113,18 +113,18 @@ if __name__ == "__main__":
                 lr=1e-3,
                 skew_config=dict(
                     method='vae_prob',
-                    power=-1,
+                    power=-0.5,
                 ),
                 skew_dataset=True,
                 priority_function_kwargs=dict(
                     decoder_distribution='gaussian_identity_variance',
                     sampling_method='importance_sampling',
-                    num_latents_to_sample=10,
+                    num_latents_to_sample=20,
                 ),
                 use_parallel_dataloading=False,
             ),
 
-            save_period=2,
+            save_period=10,
         ),
     )
     search_space = {}
