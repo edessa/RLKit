@@ -3,13 +3,10 @@ from rlkit.envs.goal_generation.pickup_goal_dataset import (
     generate_vae_dataset,
     get_image_presampled_goals_from_vae_env,
 )
-from multiprocessing import Process
-
-
 
 import rlkit.torch.vae.vae_schedules as vae_schedules
 from multiworld.envs.mujoco.cameras import (
-    sawyer_pick_and_place_camera, sawyer_pick_and_place_camera_slanted_angle,
+    sawyer_pick_and_place_camera_slanted_angle,
 )
 from rlkit.launchers.launcher_util import run_experiment
 from rlkit.launchers.skewfit_experiments import skewfit_full_experiment
@@ -21,11 +18,11 @@ if __name__ == "__main__":
         algorithm='Skew-Fit',
         imsize=48,
         double_algo=False,
-        env_id="SawyerPickupEnv-v1",
+        env_id="SawyerPickupWideEnv-v0",
         skewfit_variant=dict(
             sample_goals_from_buffer=True,
             save_video=True,
-            save_video_period=50,
+            save_video_period=5,
             presample_goals=True,
             custom_goal_sampler='replay_buffer',
             online_vae_trainer_kwargs=dict(
@@ -34,7 +31,7 @@ if __name__ == "__main__":
             ),
             generate_goal_dataset_fctn=get_image_presampled_goals_from_vae_env,
             goal_generation_kwargs=dict(
-                num_presampled_goals=500,
+                num_presampled_goals=1000,
             ),
             qf_kwargs=dict(
                 hidden_sizes=[400, 300],
@@ -45,7 +42,7 @@ if __name__ == "__main__":
             vf_kwargs=dict(
                 hidden_sizes=[400, 300],
             ),
-            max_path_length=50,
+            max_path_length=100,
             algo_kwargs=dict(
                 batch_size=1024,
                 num_epochs=750,
@@ -55,7 +52,7 @@ if __name__ == "__main__":
                 min_num_steps_before_training=10000,
                 vae_training_schedule=vae_schedules.custom_schedule,
                 oracle_data=False,
-                vae_save_period=50,
+                vae_save_period=5,
                 parallel_vae_train=False,
             ),
             twin_sac_trainer_kwargs=dict(
@@ -134,7 +131,7 @@ if __name__ == "__main__":
                 ),
                 use_parallel_dataloading=False,
             ),
-            save_period=10,
+            save_period=5,
         ),
         init_camera=sawyer_pick_and_place_camera_slanted_angle,
     )

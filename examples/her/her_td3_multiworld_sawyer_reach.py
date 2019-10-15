@@ -26,8 +26,8 @@ from rlkit.torch.torch_rl_algorithm import TorchBatchRLAlgorithm
 def experiment(variant):
     import multiworld
     multiworld.register_all_envs()
-    eval_env = gym.make('SawyerReachXYZEnv-v0')
-    expl_env = gym.make('SawyerReachXYZEnv-v0')
+    eval_env = gym.make('SawyerPickupEnv-v0')
+    expl_env = gym.make('SawyerPickupEnv-v0')
     observation_key = 'state_observation'
     desired_goal_key = 'state_desired_goal'
     achieved_goal_key = desired_goal_key.replace("desired", "achieved")
@@ -141,5 +141,5 @@ if __name__ == "__main__":
             hidden_sizes=[400, 300],
         ),
     )
-    setup_logger('her-td3-sawyer-experiment', variant=variant)
+    setup_logger('her-ddpg-sawyer-experiment', variant=variant)
     experiment(variant)
