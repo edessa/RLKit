@@ -1,9 +1,9 @@
 import rlkit.util.hyperparameter as hyp
-from multiworld.envs.mujoco.cameras import sawyer_pusher_camera_upright_v1
+from multiworld.envs.mujoco.cameras import *
 from rlkit.launchers.launcher_util import run_experiment
 import rlkit.torch.vae.vae_schedules as vae_schedules
 from rlkit.launchers.skewfit_experiments import skewfit_full_experiment
-from rlkit.torch.vae.conv_vae import imsize48_default_architecture
+from rlkit.torch.vae.conv_vae import imsize84_default_architecture
 
 
 if __name__ == "__main__":
@@ -11,10 +11,9 @@ if __name__ == "__main__":
         algorithm='Skew-Fit',
         double_algo=False,
         online_vae_exploration=False,
-        imsize=48,
-        init_camera=sawyer_pusher_camera_upright_v1,
-        #env_id='SawyerPushNIPSEasy-v0',
-        env_id = 'SawyerMultiObj-v0',
+        imsize=84,
+        init_camera=sawyer_init_camera_zoomed_in,
+        env_id='SawyerMultiObj-v0',
         skewfit_variant=dict(
             save_video=True,
             custom_goal_sampler='replay_buffer',
@@ -32,17 +31,17 @@ if __name__ == "__main__":
             vf_kwargs=dict(
                 hidden_sizes=[400, 300],
             ),
-            max_path_length=100,
+            max_path_length=50,
             algo_kwargs=dict(
-                batch_size=1024,
+                batch_size=16,
                 num_epochs=1000,
-                num_eval_steps_per_epoch=500,
-                num_expl_steps_per_train_loop=500,
+                num_eval_steps_per_epoch=5000,
+                num_expl_steps_per_train_loop=5000,
                 num_trains_per_train_loop=1000,
-                min_num_steps_before_training=60000,
-                vae_training_schedule=vae_schedules.custom_schedule,
+                min_num_steps_before_training=10000,
+                vae_training_schedule=vae_schedules.custom_schedule_2,
                 oracle_data=False,
-                vae_save_period=2,
+                vae_save_period=50,
                 parallel_vae_train=False,
             ),
             twin_sac_trainer_kwargs=dict(
@@ -54,7 +53,7 @@ if __name__ == "__main__":
             ),
             replay_buffer_kwargs=dict(
                 start_skew_epoch=10,
-                max_size=int(100000),
+                max_size=int(5000),
                 fraction_goals_rollout_goals=0.2,
                 fraction_goals_env_goals=0.5,
                 exploration_rewards_type='None',
@@ -85,7 +84,7 @@ if __name__ == "__main__":
             ),
         ),
         train_vae_variant=dict(
-            representation_size=32,
+            representation_size=4,
             beta=20,
             num_epochs=0,
             dump_skew_debug_plots=False,
@@ -102,7 +101,7 @@ if __name__ == "__main__":
             ),
             vae_kwargs=dict(
                 input_channels=3,
-                architecture=imsize48_default_architecture,
+                architecture=imsize84_default_architecture,
                 decoder_distribution='gaussian_identity_variance',
             ),
             # TODO: why the redundancy?
@@ -119,19 +118,19 @@ if __name__ == "__main__":
                 priority_function_kwargs=dict(
                     decoder_distribution='gaussian_identity_variance',
                     sampling_method='importance_sampling',
-                    num_latents_to_sample=20,
+                    num_latents_to_sample=10,
                 ),
                 use_parallel_dataloading=False,
             ),
 
-            save_period=10,
+            save_period=25,
         ),
     )
     search_space = {}
     sweeper = hyp.DeterministicHyperparameterSweeper(
         search_space, default_parameters=variant,
     )
-    print(sweeper)
+
     n_seeds = 1
     mode = 'local'
     exp_prefix = 'dev-{}'.format(
